@@ -42,6 +42,25 @@
 #include "objsec.h"
 #include "conditional.h"
 
+const unsigned int selinux_checkreqprot;
+
+static DEFINE_MUTEX(sel_mutex);
+
+/* global data for booleans */
+static struct dentry *bool_dir;
+static int bool_num;
+static char **bool_pending_names;
+static int *bool_pending_values;
+
+/* global data for classes */
+static struct dentry *class_dir;
+static unsigned long last_class_ino;
+
+static char policy_opened;
+
+/* global data for policy capabilities */
+static struct dentry *policycap_dir;
+
 enum sel_inos {
 	SEL_ROOT_INO = 2,
 	SEL_LOAD,	/* load policy */
@@ -664,10 +683,13 @@ static ssize_t sel_write_checkreqprot(struct file *file, const char __user *buf,
 		return PTR_ERR(page);
 
 	length = -EINVAL;
-	if (sscanf(page, "%u", &new_value) != 1)
+	if (sscanf(page, "%u", &new_value) != 1 || new_value)
 		goto out;
 
+<<<<<<< HEAD
 	fsi->state->checkreqprot = new_value ? 1 : 0;
+=======
+>>>>>>> 5951168e5d9c... hard-wire legacy checkreqprot option to 0
 	length = count;
 out:
 	kfree(page);
